@@ -10,6 +10,7 @@ bool writeConfigToIni(const Config& cfg, const std::string& filePath) {
         return false;
     }
     outFile << "gamedir=" << cfg.gamedir << "\n";
+    outFile << "steamdir=" << cfg.steamdir << "\n";
     outFile << "init=" << cfg.init << "\n";
     outFile.close();
     return true;
@@ -28,6 +29,7 @@ bool readConfigFromIni(Config& cfg, const std::string& filePath) {
         std::string key, value;
         if (std::getline(iss, key, '=') && std::getline(iss, value)) {
             if(key == "gamedir") cfg.gamedir = value;
+            if(key == "steamdir") cfg.steamdir = value;
             if(key == "init") cfg.init = std::stoi(value);
         }
     }

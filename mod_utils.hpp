@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "config_utils.h"
-
+#include <regex>
 namespace fs = std::filesystem;
 
 namespace mod_utils {
@@ -22,7 +22,9 @@ void link_mod(const std::string& modname, const Config &cfg);
 
 void nvse_mod(const std::string& modname, const Config &cfg);
 
+void dataMove(std::string file_path, std::string target_base_path,std::regex pattern );
 
+void link(const std::string& modname, const Config &cfg);
 
 
 }

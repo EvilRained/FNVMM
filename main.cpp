@@ -42,18 +42,23 @@ void extractMod(Config& cfg, std::string mod, std::string type)
     } catch ( const bit7z::BitException& ex ) {std::cout << "error" << ex.what();}
 
 
-    std::cout << "\n" + cleanname + " Has been added \n";
+    std::cout << "\n\n" + cleanname + " Has been added \n";
 }
 
 
 
-void setDirectory(Config& cfg, const std::string& dir) {
+void setDirectory(Config& cfg, const std::string& dir, const std::string type = "") {
     if (fs::exists(dir)) {
-        cfg.gamedir = dir; // Update the existing cfg
-        std::cout << "Game Dir set to: " << cfg.gamedir << "\n";
+        if(type == "steamdir") {
+            cfg.steamdir= dir;
+            std::cout << "Steam Dir set to: " << cfg.steamdir << "\n";
 
+        } else if(type == "") {
+            cfg.gamedir = dir; // Update the existing cfg
+            std::cout << "Game Dir set to: " << cfg.gamedir << "\n";
+        }
         if (writeConfigToIni(cfg, "config.ini")) {
-            std::cout << "Game Dir Updated in config.ini\n";
+            if(type == "") std::cout << "Game Dir Updated in config.ini\n"; else std::cout << "Steam Dir Updated in config.ini\n";
         } else {
             std::cerr << "Failed to write to file\n";
         }
@@ -71,7 +76,7 @@ void download(Config& cfg, const std::string& key) {
         std::smatch matches;
 
         if (std::regex_search(key, matches, filetype)) {
-            std::cout << "\nExtracting...\n";
+            std::cout << "\n Extracting...\n";
 
             std::string type = matches[1];
             extractMod(cfg, key, type);
@@ -90,7 +95,7 @@ int main(int argc, char* argv[]) {
     Config cfg;
     if (fs::exists("config.ini")) {
         readConfigFromIni(cfg, "config.ini");
-        std::cout << "Loaded config: gamedir=" << cfg.gamedir << "\n";
+        std::cout << "Loaded config: gamedir=" << cfg.gamedir << "\nLoaded config: steamdir=" << cfg.steamdir << "\n\n";
     } else {
         std::cout << "No config.ini found, using defaults\n";
     }
@@ -107,11 +112,11 @@ int main(int argc, char* argv[]) {
         } else if (flag == "--install") {
             std::cout << "Please enter link\n";
         }
-
+        if (flag == "--steam-dir" && argc > 2 && argv[2] != nullptr) {
+            setDirectory(cfg, argv[2], "steamdir");
+        }
         if (flag == "--game-dir" && argc > 2 && argv[2] != nullptr) {
             setDirectory(cfg, argv[2]); // Pass cfg by reference
-        } else if (flag == "--game_dir") {
-            std::cout << "Please provide a directory\n";
         } else if (flag == "--config") {
             std::cout << "\n Welcome to 23 Mods\n We have just a couple of steps...";
             welcomeConfig(cfg);

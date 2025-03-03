@@ -8,7 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(CURL REQUIRED)
 add_executable(Learning main.cpp
     config_utils.h config_utils.cpp
-    mod_utils.hpp mod_utils.cpp)
+    mod_utils.hpp mod_utils.cpp
+    utils.h utils.cpp)
 
 include(GNUInstallDirs)
 target_include_directories(Learning PRIVATE ${LIBGIT2_INCLUDE_DIR})

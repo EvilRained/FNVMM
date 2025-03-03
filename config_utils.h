@@ -7,6 +7,7 @@ namespace fs = std::filesystem;
 
 struct Config {
     std::string gamedir = "~/";
+    std::string steamdir = "~/";
     int init = 0;
 };
 
