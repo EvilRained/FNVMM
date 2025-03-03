@@ -41,8 +41,11 @@ void welcomeConfig(Config& cfg) {
     bool validExe = false;
     std::string exe_path;
     std::string path;
+    std::string steam_path;
+
+
     do {
-    std::cout << "\n \n What is path to your Directory \n";
+    std::cout << "\n \n What is the path to your Directory \n";
     std::getline(std::cin, path);
 
     exe_path = path + "FalloutNVLauncher.exe";
@@ -51,9 +54,18 @@ void welcomeConfig(Config& cfg) {
     } else {
         std::cout << "\nFalloutNVLauncher Found...\n";
         cfg.gamedir = path;
+
+
         validExe = true;
+
+
     }
     } while (!validExe);
+
+    std::cout << "\n\nWhat is the path to your Steam directory?\n";
+    std::getline(std::cin, steam_path);
+    cfg.steamdir = steam_path;
+
     std::string data_path = path + "Data/";
     std::string data_path_backup = path + ".Data_Old/";
     std::string completepath = std::filesystem::current_path().string() + "/Data/";

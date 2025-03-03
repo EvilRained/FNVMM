@@ -6,14 +6,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(CURL REQUIRED)
+find_package(SQLite3 REQUIRED)
 add_executable(Learning main.cpp
     config_utils.h config_utils.cpp
     mod_utils.hpp mod_utils.cpp
-    utils.h utils.cpp)
+    utils.h utils.cpp
+    mod_db.h mod_db.cpp)
 
 include(GNUInstallDirs)
 target_include_directories(Learning PRIVATE ${LIBGIT2_INCLUDE_DIR})
 target_include_directories(Learning PUBLIC .)
+target_link_libraries(Learning PRIVATE SQLite::SQLite3)
 target_link_libraries(Learning PRIVATE CURL::libcurl)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bit7z/) # Path to bit7z's repository
 

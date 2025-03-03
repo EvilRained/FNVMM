@@ -1,5 +1,6 @@
 #include "mod_utils.hpp"
 #include "config_utils.h"
+#include "mod_db.h"
 #include <iostream>
 #include <fstream>
 #include <regex>
@@ -7,41 +8,12 @@
 
 namespace mod_utils {
 
-void create_symlinks_recursive(const fs::path& source_dir,
-                               const fs::path& target_dir,
-                               bool overwrite) {
-    try {
-        fs::create_directories(target_dir);
-
-        for (const auto& entry : fs::directory_iterator(source_dir)) {
-            const fs::path& src_path = entry.path();
-            fs::path dest_path = target_dir / src_path.filename();
-
-            if (fs::is_directory(src_path)) {
-                create_symlinks_recursive(src_path, dest_path, overwrite);
-            } else if (fs::is_regular_file(src_path)) {
-                try {
-                    if (overwrite && fs::exists(dest_path)) {
-                        fs::remove(dest_path);
-                    }
-
-                    fs::create_symlink(src_path, dest_path);
-                    std::cout << "Created symlink: " << dest_path
-                              << " -> " << src_path << std::endl;
-                } catch (const fs::filesystem_error& e) {
-                    std::cerr << "Error creating symlink " << dest_path
-                              << ": " << e.what() << std::endl;
-                }
-            }
-        }
-    } catch (const fs::filesystem_error& e) {
-        std::cerr << "Filesystem error: " << e.what() << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-}
 
 void modCopy(const std::string& modname, const Config &cfg, std::string option = "0") {
+    sqlite3* db;
+    sqlite3_open("mods.db", &db);
+    initDatabase(db);
+
     std::filesystem::path gamedir_path(cfg.gamedir);
     std::string gamedir = gamedir_path.string() + "Data/";
     std::string mod_base_path = "mods/" + modname;
@@ -70,6 +42,8 @@ void modCopy(const std::string& modname, const Config &cfg, std::string option =
                 fs::copy(file.path(), esp_path, std::filesystem::copy_options::skip_existing);
                 std::cout << "\n Moving ESP Files: " << filename << "\n";
                 utils::append(ini_path, filename + "\n");
+                Mod mod{filename, "/path1/FalloutNV.esm"};
+                saveMod(db, mod);
             }
         }
         // Handle NVSE files
